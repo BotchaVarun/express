@@ -1,72 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration</title>
 </head>
 <body>
-    <form action="" id="registered">
-        <p>Full Name</p>
-        <input type="text" name="fullname" id="fullname">
-        <p>Email</p>
-        <input type="email" name="email" id="email">
-        <p>Password</p>
-        <input type="password" name="password" id="password">
-        <button type="submit">Register</button>
-    </form>
-    <p id="message"></p>
-    <button onclick="fetchUsers('varun')">Fetch</button>
-    <ul id="userList" style="list-style: none;"></ul>
-    <script>
-        document.getElementById("registered").addEventListener("submit", async (event) => {
-            event.preventDefault(); 
-            const fullname = document.getElementById('fullname').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-        
-            const response = await fetch("https://express-project-mu.vercel.app/add", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullname, email, password })
-            });
-        
-            const data = await response.json();
-            document.getElementById("message").textContent = data.message;
+  <form id="registered">
+    <p>Full Name</p>
+    <input type="text" name="fullname" id="fullname" required />
+    <p>Email</p>
+    <input type="email" name="email" id="email" required />
+    <p>Password</p>
+    <input type="password" name="password" id="password" required />
+    <button type="submit">Register</button>
+  </form>
+
+  <p id="message"></p>
+
+  <button onclick="fetchUsers('varun')">Fetch</button>
+  <ul id="userList" style="list-style: none;"></ul>
+
+  <script>
+    const BASE_URL = "https://express-sable-eight.vercel.app";
+
+    document.getElementById("registered").addEventListener("submit", async (event) => {
+      event.preventDefault(); 
+      const fullname = document.getElementById("fullname").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch(`${BASE_URL}/add`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fullname, email, password })
         });
-        
-        async function fetchUsers(email) {
-            const response = await fetch(`https://express-project-mu.vercel.app/users/${email}`);
-            const users = await response.json();
-            const userList = document.getElementById('userList');
-            userList.innerHTML = '';
-        
-            users.forEach(i => {
-                const li = document.createElement('li');
-                li.textContent = `UserName: ${i.fullname}, Email: ${i.email}, Password: ${i.password}`;
-                userList.appendChild(li);
-            });
-        }
-        
-        async function updatedUser(email, newData) {
-            try {
-                const response = await fetch(`https://express-project-mu.vercel.app/users/${email}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newData),
-                });
-        
-                const users = await response.json();
-                console.log(users.message);
-            } catch (err) {
-                console.error("Error updating user:", err);
-            }
-        }
-        
-        
-        // Ensure function runs only when page loads
-        window.onload = () => updatedUser("Varun", { fullname: "Meghana", password: "A22126552201" });
-        
-    </script>
+
+        const data = await response.json();
+        document.getElementById("message").textContent = data.message || "Registered!";
+      } catch (error) {
+        console.error("Error during registration:", error);
+        document.getElementById("message").textContent = "Error during registration.";
+      }
+    });
+
+    async function fetchUsers(email) {
+      try {
+        const response = await fetch(`${BASE_URL}/users/${email}`);
+        const users = await response.json();
+        const userList = document.getElementById("userList");
+        userList.innerHTML = "";
+        users.forEach((i) => {
+          const li = document.createElement("li");
+          li.textContent = `UserName: ${i.fullname}, Email: ${i.email}, Password: ${i.password}`;
+          userList.appendChild(li);
+        });
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    }
+
+    async function updatedUser(email, newData) {
+      try {
+        const response = await fetch(`${BASE_URL}/users/${email}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newData)
+        });
+
+        const users = await response.json();
+        console.log(users.message);
+      } catch (err) {
+        console.error("Error updating user:", err);
+      }
+    }
+
+    // Run on page load
+    window.onload = () => updatedUser("Varun", { fullname: "Meghana", password: "A22126552201" });
+  </script>
 </body>
 </html>

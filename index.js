@@ -12,7 +12,10 @@ const port=process.env.PORT||8080;
 
 app.use(cors());
 require('dotenv').config();
-
+app.use(cors({
+    origin: "https://express-sable-eight.vercel.app"
+  }));
+  
 const URL = 'mongodb+srv://varun:1234@cluster0.yllpes0.mongodb.net/meghana?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.connect(URL, {
